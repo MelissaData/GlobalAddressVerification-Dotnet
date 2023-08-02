@@ -6,7 +6,7 @@ param(
     $addressline1 = '',
     $locality = '',
     $administrativearea = '',
-    $postalcode = '',
+    $postal = '',
     $country = '', 
     $license = '',
     [switch]$quiet = $false
@@ -16,7 +16,7 @@ param(
 # Modify this if you want to use 
 $CurrentPath = $PSScriptRoot
 Set-Location $CurrentPath
-$ProjectPath = "$CurrentPath\GlobalAddressVerification"
+$ProjectPath = "$CurrentPath\GlobalAddressVerificationDotnet"
 $BuildPath = "$ProjectPath\Build"
 
 If (!(Test-Path $BuildPath)) {
@@ -45,12 +45,12 @@ if ([string]::IsNullOrEmpty($license)) {
 # Build project
 Write-Host "`n===================================== BUILD PROJECT ===================================="
 
-dotnet publish -f="net7.0" -c Release -o $BuildPath GlobalAddressVerification\GlobalAddressVerification.csproj
+dotnet publish -f="net7.0" -c Release -o $BuildPath GlobalAddressVerificationDotnet\GlobalAddressVerificationDotnet.csproj
 
 # Run project
-if ([string]::IsNullOrEmpty($addressline1) -and [string]::IsNullOrEmpty($locality) -and [string]::IsNullOrEmpty($administrativearea) -and [string]::IsNullOrEmpty($postalcode) -and [string]::IsNullOrEmpty($country)) {
-  dotnet $BuildPath\GlobalAddressVerification.dll --license $license 
+if ([string]::IsNullOrEmpty($addressline1) -and [string]::IsNullOrEmpty($locality) -and [string]::IsNullOrEmpty($administrativearea) -and [string]::IsNullOrEmpty($postal) -and [string]::IsNullOrEmpty($country)) {
+  dotnet $BuildPath\GlobalAddressVerificationDotnet.dll --license $license 
 }
 else {
-  dotnet $BuildPath\GlobalAddressVerification.dll --license $license --addressline1 $addressline1 --locality $locality --administrativearea $administrativearea --postalcode $postalcode --country $country
+  dotnet $BuildPath\GlobalAddressVerificationDotnet.dll --license $license --addressline1 $addressline1 --locality $locality --administrativearea $administrativearea --postal $postal --country $country
 }

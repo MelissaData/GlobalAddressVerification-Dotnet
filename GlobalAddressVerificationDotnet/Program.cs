@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
+using System.Security.Cryptography;
 
-namespace GlobalAddressVerification
+namespace GlobalAddressVerificationDotnet
 {
   static class Program
   {
@@ -52,7 +53,7 @@ namespace GlobalAddressVerification
             administrativeArea = args[i + 1];
           }
         }
-        if (args[i].Equals("--postalcode"))
+        if (args[i].Equals("--postal"))
         {
           if (args[i + 1] != null)
           {
@@ -95,6 +96,7 @@ namespace GlobalAddressVerification
           Console.WriteLine(APICall.Substring(i, APICall.Length - i));
         }
       }
+
       Console.WriteLine("\nAPI Response:");
       Console.WriteLine(prettyResponse);
     }
@@ -125,7 +127,7 @@ namespace GlobalAddressVerification
           Console.Write("AdministrativeArea: ");
           inputAdministrativeArea = Console.ReadLine();
 
-          Console.Write("Postal: ");
+          Console.Write("PostalCode: ");
           inputPostalCode = Console.ReadLine();
 
           Console.Write("Country: ");
@@ -164,7 +166,7 @@ namespace GlobalAddressVerification
 
           if (string.IsNullOrEmpty(inputPostalCode))
           {
-            Console.Write("Postal: ");
+            Console.Write("PostalCode: ");
             inputPostalCode = Console.ReadLine();
           }
 
@@ -191,7 +193,7 @@ namespace GlobalAddressVerification
         Console.WriteLine($"\t       AddressLine1: {inputAddressLine1}");
         Console.WriteLine($"\t           Locality: {inputLocality}");
         Console.WriteLine($"\t AdministrativeArea: {inputAdministrativeArea}");
-        Console.WriteLine($"\t        Postal Code: {inputPostalCode}");
+        Console.WriteLine($"\t         PostalCode: {inputPostalCode}");
         Console.WriteLine($"\t            Country: {inputCountry}");
 
         // Create Service Call
