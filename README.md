@@ -62,8 +62,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Download this project
 ```
-$ git clone https://github.com/MelissaData/GlobalAddressVerification-Dotnet
-$ cd GlobalAddressVerification-Dotnet
+git clone https://github.com/MelissaData/GlobalAddressVerification-Dotnet
+cd GlobalAddressVerification-Dotnet
 ```
 
 ## Windows
@@ -109,15 +109,15 @@ There are two modes:
 
 	The script will prompt the user for input(s), then use the provided input(s) to call the Cloud API. For example:
 	```
-	$ .\GlobalAddressVerificationDotnet.ps1
+	.\GlobalAddressVerificationDotnet.ps1
 	```
 
 - Command Line 
 
 	You can pass an address line 1, locality, administrative area, postal code, country, and a license string into `-addressline1`, `-locality`, `-administrativearea`, `-postal`, `-country` and `-license` parameters respectively to test the Cloud API. For example:
 	```
-    $ .\GlobalAddressVerificationDotnet.ps1 -addressline1 "22382 Avenida Empresa" -locality "Rancho Santa Margarita" -administrativearea "CA" -postal "92688" -country "United States"
-    $ .\GlobalAddressVerificationDotnet.ps1 -addressline1 "22382 Avenida Empresa" -locality "Rancho Santa Margarita" -administrativearea "CA" -postal "92688" -country "United States" -license "<your_license_string>"
+    .\GlobalAddressVerificationDotnet.ps1 -addressline1 "22382 Avenida Empresa" -locality "Rancho Santa Margarita" -administrativearea "CA" -postal "92688" -country "United States"
+    .\GlobalAddressVerificationDotnet.ps1 -addressline1 "22382 Avenida Empresa" -locality "Rancho Santa Margarita" -administrativearea "CA" -postal "92688" -country "United States" -license "<your_license_string>"
     ```
 
 This is the expected output from a successful setup for interactive mode:
@@ -172,15 +172,15 @@ There are two modes:
 
 	The script will prompt the user for input(s), then use the provided input(s) to call the Cloud API. For example:
 	```
-	$ ./GlobalAddressVerificationDotnet.sh
+	./GlobalAddressVerificationDotnet.sh
 	```
 
 - Command Line 
 
 	You can pass an address line 1, locality, administrative area, postal code, country, and a license string into `--addressline1`, `--locality`, `--administrativearea`, `--postal`, `--country` and `--license` parameters respectively to test the Cloud API. For example:
 	```
-    $ ./GlobalAddressVerificationDotnet.sh --addressline1 "22382 Avenida Empresa" --locality "Rancho Santa Margarita" --administrativearea "CA" --postal "92688" --country "United States"
-    $ ./GlobalAddressVerificationDotnet.sh --addressline1 "22382 Avenida Empresa" --locality "Rancho Santa Margarita" --administrativearea "CA" --postal "92688" --country "United States" --license "<your_license_string>"
+    ./GlobalAddressVerificationDotnet.sh --addressline1 "22382 Avenida Empresa" --locality "Rancho Santa Margarita" --administrativearea "CA" --postal "92688" --country "United States"
+    ./GlobalAddressVerificationDotnet.sh --addressline1 "22382 Avenida Empresa" --locality "Rancho Santa Margarita" --administrativearea "CA" --postal "92688" --country "United States" --license "<your_license_string>"
     ```
 
 This is the expected output from a successful setup for interactive mode:
