@@ -3,9 +3,37 @@ using System.Security.Cryptography;
 
 namespace GlobalAddressVerificationDotnet
 {
+  /// <summary>
+  /// Global Address Verification verifies, standardizes, and corrects addresses for
+  /// countries around the world, returning the formatted address along with result
+  /// codes that describe the quality of the match.
+  ///
+  /// <para>High-level flow of this sample:</para>
+  /// <list type="number">
+  ///   <item><description>ARGS    - ParseArguments reads any --flag values off the command line.</description></item>
+  ///   <item><description>INPUT   - CallAPI fills in whatever wasn't supplied via interactive prompts.</description></item>
+  ///   <item><description>REQUEST - CallAPI builds the REST query string (license + input fields).</description></item>
+  ///   <item><description>CALL    - GetContents issues the GET request and pretty-prints the JSON response.</description></item>
+  /// </list>
+  ///
+  /// <para>This sample is a thin HTTP client: it builds a query string, sends a GET
+  /// request to the Global Address Verification Cloud API, and prints the JSON response.</para>
+  ///
+  /// <para>Reference:</para>
+  /// <list type="bullet">
+  ///   <item><description>Documentation: https://docs.melissa.com/cloud-api/global-address-verification/global-address-verification-index.html</description></item>
+  ///   <item><description>Release notes: https://releasenotes.melissa.com/cloud-api/global-address-verification/</description></item>
+  ///   <item><description>Result codes: https://docs.melissa.com/melissa/result-codes/result-codes-index.html</description></item>
+  /// </list>
+  /// </summary>
   static class Program
   {
 
+    /// <summary>
+    /// Entry point. Reads the optional command-line arguments, then hands control to
+    /// CallAPI, which performs the actual request/response cycle.
+    /// </summary>
+    /// <param name="args">The raw command-line arguments.</param>
     static void Main(string[] args)
     {
       string baseServiceUrl = @"https://address.melissadata.net/";
@@ -17,10 +45,26 @@ namespace GlobalAddressVerificationDotnet
       string postalCode = "";
       string country = "";
 
+      // Populate any values passed on the command line, then run the lookup.
       ParseArguments(ref license, ref addressLine1, ref locality, ref administrativeArea, ref postalCode, ref country, args);
       CallAPI(baseServiceUrl, serviceEndpoint, license, addressLine1, locality, administrativeArea, postalCode, country);
     }
 
+    /// <summary>
+    /// Reads the supported command-line options and writes each recognized value into
+    /// its matching by-ref parameter. Any parameter left unset here falls back to an
+    /// interactive prompt later in <see cref="CallAPI"/>.
+    ///
+    /// <para>Recognized flags (each followed by its value, e.g. "--locality Rancho Santa Margarita"):
+    /// --license/-l, --addressline1, --locality, --administrativearea, --postal, --country.</para>
+    /// </summary>
+    /// <param name="license">Receives the Melissa license string, if supplied.</param>
+    /// <param name="addressLine1">Receives the street address to verify, if supplied.</param>
+    /// <param name="locality">Receives the locality (city) to verify, if supplied.</param>
+    /// <param name="administrativeArea">Receives the administrative area (state/province) to verify, if supplied.</param>
+    /// <param name="postalCode">Receives the postal code to verify, if supplied.</param>
+    /// <param name="country">Receives the country to verify, if supplied.</param>
+    /// <param name="args">The raw command-line arguments to parse.</param>
     static void ParseArguments(ref string license, ref string addressLine1, ref string locality, ref string administrativeArea, ref string postalCode, ref string country, string[] args)
     {
       for (int i = 0; i < args.Length; i++)
@@ -70,6 +114,12 @@ namespace GlobalAddressVerificationDotnet
       }
     }
 
+    /// <summary>
+    /// Issues the GET request against the Global Address Verification endpoint and
+    /// pretty-prints the API call and the JSON response to the console.
+    /// </summary>
+    /// <param name="baseServiceUrl">The Global Address Verification Cloud API base URL.</param>
+    /// <param name="requestQuery">The endpoint path plus query string built by <see cref="CallAPI"/>.</param>
     public static async Task GetContents(string baseServiceUrl, string requestQuery)
     {
       HttpClient client = new HttpClient();
@@ -77,6 +127,8 @@ namespace GlobalAddressVerificationDotnet
       HttpResponseMessage response = await client.GetAsync(requestQuery);
 
       string text = await response.Content.ReadAsStringAsync();
+
+      // Re-serialize with indentation so the raw response is easier to read.
       var obj = JsonConvert.DeserializeObject(text);
       var prettyResponse = JsonConvert.SerializeObject(obj, Newtonsoft.Json.Formatting.Indented);
 
@@ -100,6 +152,23 @@ namespace GlobalAddressVerificationDotnet
       Console.WriteLine("\nAPI Response:");
       Console.WriteLine(prettyResponse);
     }
+
+    /// <summary>
+    /// Drives the interactive/CLI loop: gathers the required address fields, builds and
+    /// submits the REST query, prints the result, and optionally repeats for another record.
+    ///
+    /// <para>In interactive mode (no address args) it loops, asking for a new record each pass
+    /// until the user answers "N". In one-shot mode (address args supplied) it runs a single
+    /// pass and exits.</para>
+    /// </summary>
+    /// <param name="baseServiceUrl">The Global Address Verification Cloud API base URL.</param>
+    /// <param name="serviceEndPoint">The specific Global Address Verification endpoint path to call.</param>
+    /// <param name="license">The Melissa license string sent with every request.</param>
+    /// <param name="addressLine1">A street address to verify in one-shot mode; if all address fields are empty, the program prompts interactively.</param>
+    /// <param name="locality">A locality (city) to verify in one-shot mode.</param>
+    /// <param name="administrativeArea">An administrative area (state/province) to verify in one-shot mode.</param>
+    /// <param name="postalCode">A postal code to verify in one-shot mode.</param>
+    /// <param name="country">A country to verify in one-shot mode.</param>
     static void CallAPI(string baseServiceUrl, string serviceEndPoint, string license, string addressLine1, string locality, string administrativeArea, string postalCode, string country)
     {
       Console.WriteLine("\n=============== WELCOME TO MELISSA GLOBAL ADDRESS VERIFICATION CLOUD API ===============\n");
@@ -114,6 +183,7 @@ namespace GlobalAddressVerificationDotnet
         string inputPostalCode = "";
         string inputCountry = "";
 
+        // No values were supplied via command line, so prompt for every field.
         if (string.IsNullOrEmpty(addressLine1) && string.IsNullOrEmpty(locality) && string.IsNullOrEmpty(administrativeArea) && string.IsNullOrEmpty(postalCode) && string.IsNullOrEmpty(country))
         {
           Console.WriteLine("\nFill in each value to see results");
@@ -135,6 +205,7 @@ namespace GlobalAddressVerificationDotnet
         }
         else
         {
+          // At least one field was supplied via command line; use those values as-is.
           inputAddressLine1 = addressLine1;
           inputLocality = locality;
           inputAdministrativeArea = administrativeArea;
@@ -142,6 +213,7 @@ namespace GlobalAddressVerificationDotnet
           inputCountry = country;
         }
 
+        // Prompt individually for any still-missing required field.
         while (string.IsNullOrEmpty(inputAddressLine1) || string.IsNullOrEmpty(inputLocality) || string.IsNullOrEmpty(inputAdministrativeArea) || string.IsNullOrEmpty(inputPostalCode) || string.IsNullOrEmpty(inputCountry))
         {
           Console.WriteLine("\nFill in missing required parameter");
@@ -177,6 +249,8 @@ namespace GlobalAddressVerificationDotnet
           }
         }
 
+        // Map input fields to the API's expected query parameter names and
+        // request a JSON response.
         Dictionary<string, string> inputs = new Dictionary<string, string>()
                 {
                     { "format", "json" },
@@ -229,6 +303,8 @@ namespace GlobalAddressVerificationDotnet
           }
         } while ((success != true) && (retryCounter < 5));
 
+        // If any address field came from the command line, treat this as a one-shot
+        // run rather than looping for additional records.
         bool isValid = false;
         if (!string.IsNullOrEmpty(addressLine1 + locality + administrativeArea + postalCode + country))
         {
@@ -236,6 +312,8 @@ namespace GlobalAddressVerificationDotnet
           shouldContinueRunning = false;
         }
 
+        // Otherwise ask whether to test another record. Keep prompting until we get a
+        // valid Y/N. "N" ends the program; "Y" falls through to another pass.
         while (!isValid)
         {
           Console.WriteLine("\nTest another record? (Y/N)");
